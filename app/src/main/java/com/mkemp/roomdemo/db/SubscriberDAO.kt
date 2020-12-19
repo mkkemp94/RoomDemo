@@ -25,15 +25,4 @@ interface SubscriberDAO {
     @Query("SELECT * FROM subscriber_data_table")
     fun getAllSubscribers(): LiveData<List<Subscriber>>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertSubscriber2(subscriber: Subscriber): Long
-
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insertSubscribers(subscriber: Subscriber, subscriber2: Subscriber, subscriber3: Subscriber): List<Long>
-
-    @Insert
-    fun insertSubscribers(subscribers: List<Subscriber>): List<Long>
-
-    @Insert
-    fun insertSubscribers(subscriber: Subscriber, subscribers: List<Subscriber>): List<Long>
 }
