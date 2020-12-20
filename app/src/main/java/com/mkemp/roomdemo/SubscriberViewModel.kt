@@ -1,5 +1,6 @@
 package com.mkemp.roomdemo
 
+import android.util.Patterns
 import androidx.databinding.Bindable
 import androidx.databinding.Observable
 import androidx.lifecycle.LiveData
@@ -36,18 +37,35 @@ class SubscriberViewModel(private val repository: SubscriberRepository) : ViewMo
     }
 
     fun saveOrUpdateClicked() {
-        if (inUpdateOrDeleteMode) {
-            // Update
-            subscriberToUpdateOrDelete.name = inputName.value!!
-            subscriberToUpdateOrDelete.email = inputEmail.value!!
-            update(subscriberToUpdateOrDelete)
-        } else {
-            // Save
-            val name = inputName.value!!
-            val email = inputEmail.value!!
-            insert(Subscriber(0, name, email))
-            inputName.value = null
-            inputEmail.value = null
+
+        if (inputName.value == null) {
+            statusMessage.value = Event("Please enter subscriber name")
+        }
+
+        else if (inputEmail.value == null) {
+            statusMessage.value = Event("Please enter subscriber email")
+        }
+
+        else if (! Patterns.EMAIL_ADDRESS.matcher(inputEmail.value!!).matches()) {
+            statusMessage.value = Event("Please enter a valid email")
+        }
+
+        else {
+            if (inUpdateOrDeleteMode) {
+                // Update
+                subscriberToUpdateOrDelete.name = inputName.value!!
+                subscriberToUpdateOrDelete.email = inputEmail.value!!
+                update(subscriberToUpdateOrDelete)
+            }
+
+            else {
+                // Save
+                val name = inputName.value!!
+                val email = inputEmail.value!!
+                insert(Subscriber(0, name, email))
+                inputName.value = null
+                inputEmail.value = null
+            }
         }
     }
 
