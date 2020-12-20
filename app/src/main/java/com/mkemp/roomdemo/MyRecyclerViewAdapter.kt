@@ -7,7 +7,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mkemp.roomdemo.databinding.ListItemBinding
 import com.mkemp.roomdemo.db.Subscriber
 
-class MyRecyclerViewAdapter(private val subscribers: List<Subscriber>) : RecyclerView.Adapter<MyViewHolder>() {
+class MyRecyclerViewAdapter(private val subscribers: List<Subscriber>,
+                            private val clickListener : (Subscriber) -> Unit) : RecyclerView.Adapter<MyViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val layoutInflater  = LayoutInflater.from(parent.context)
@@ -21,16 +22,19 @@ class MyRecyclerViewAdapter(private val subscribers: List<Subscriber>) : Recycle
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        holder.bind(subscribers[position])
+        holder.bind(subscribers[position], clickListener)
     }
 
 }
 
 class MyViewHolder(val binding: ListItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(subscriber: Subscriber) {
+    fun bind(subscriber: Subscriber, clickListener: (Subscriber) -> Unit) {
         binding.nameTextView.text = subscriber.name
         binding.emailTextView.text = subscriber.email
+        binding.listItemLayout.setOnClickListener {
+            clickListener(subscriber)
+        }
     }
 
 }

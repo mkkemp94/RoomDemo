@@ -3,11 +3,13 @@ package com.mkemp.roomdemo
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mkemp.roomdemo.databinding.ActivityMainBinding
+import com.mkemp.roomdemo.db.Subscriber
 import com.mkemp.roomdemo.db.SubscriberDatabase
 import com.mkemp.roomdemo.db.SubscriberRepository
 
@@ -41,7 +43,11 @@ class MainActivity : AppCompatActivity()
     private fun displaySubscribersList() {
         subscriberViewModel.subscribers.observe(this, Observer {
             Log.i("MyTag", it.toString())
-            binding.subscriberRecyclerView.adapter = MyRecyclerViewAdapter(it)
+            binding.subscriberRecyclerView.adapter = MyRecyclerViewAdapter(it, { selectedItem : Subscriber -> listItemClicked(selectedItem)})
         })
+    }
+
+    private fun listItemClicked(subscriber: Subscriber) {
+        Toast.makeText(this, "selected name ${subscriber.name}", Toast.LENGTH_LONG).show()
     }
 }
