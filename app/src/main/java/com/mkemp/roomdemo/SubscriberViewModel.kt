@@ -13,6 +13,9 @@ class SubscriberViewModel(private val repository: SubscriberRepository) : ViewMo
 
     val subscribers = repository.subscribers
 
+    private var inUpdateOrDeleteMode = false
+    private lateinit var subscriberToUpdateOrDelete: Subscriber
+
     @Bindable
     val inputName = MutableLiveData<String>()
 
@@ -30,16 +33,30 @@ class SubscriberViewModel(private val repository: SubscriberRepository) : ViewMo
         clearAllOrDeleteButtonText.value = "Clear All"
     }
 
-    fun saveOrUpdate() {
-        val name = inputName.value!!
-        val email = inputEmail.value!!
-        insert(Subscriber(0, name, email))
-        inputName.value = null
-        inputEmail.value = null
+    fun saveOrUpdateClicked() {
+        if (inUpdateOrDeleteMode) {
+            // Update
+            subscriberToUpdateOrDelete.name = inputName.value!!
+            subscriberToUpdateOrDelete.email = inputEmail.value!!
+            update(subscriberToUpdateOrDelete)
+        } else {
+            // Save
+            val name = inputName.value!!
+            val email = inputEmail.value!!
+            insert(Subscriber(0, name, email))
+            inputName.value = null
+            inputEmail.value = null
+        }
     }
 
-    fun clearAllOrDelete() {
-        clearAll()
+    fun clearAllOrDeleteClicked() {
+        if (inUpdateOrDeleteMode) {
+            // Delete
+            delete(subscriberToUpdateOrDelete)
+        } else {
+            // Clear All
+            clearAll()
+        }
     }
 
     fun insert(subscriber: Subscriber) {
@@ -52,18 +69,39 @@ class SubscriberViewModel(private val repository: SubscriberRepository) : ViewMo
         viewModelScope.launch {
             repository.update(subscriber)
         }
+
+        inputName.value = null
+        inputEmail.value = null
+        inUpdateOrDeleteMode = false
+        saveOrUpdateButtonText.value = "Save"
+        clearAllOrDeleteButtonText.value = "Clear All"
     }
 
     fun delete(subscriber: Subscriber) {
         viewModelScope.launch {
             repository.delete(subscriber)
         }
+
+        inputName.value = null
+        inputEmail.value = null
+        inUpdateOrDeleteMode = false
+        saveOrUpdateButtonText.value = "Save"
+        clearAllOrDeleteButtonText.value = "Clear All"
     }
 
     fun clearAll() {
         viewModelScope.launch {
             repository.deleteAll()
         }
+    }
+
+    fun initUpdateAndDeleteMode(subscriber: Subscriber) {
+        inUpdateOrDeleteMode = true
+        inputName.value = subscriber.name
+        inputEmail.value = subscriber.email
+        subscriberToUpdateOrDelete = subscriber
+        saveOrUpdateButtonText.value = "Update"
+        clearAllOrDeleteButtonText.value = "Delete"
     }
 
     override fun removeOnPropertyChangedCallback(callback: Observable.OnPropertyChangedCallback?) {

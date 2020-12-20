@@ -53,7 +53,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@={myViewModel.saveOrUpdateButtonText}"
-                android:onClick="@{() -> myViewModel.saveOrUpdate()}"
+                android:onClick="@{() -> myViewModel.saveOrUpdateClicked()}"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -63,7 +63,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@={myViewModel.clearAllOrDeleteButtonText}"
-                android:onClick="@{() -> myViewModel.clearAllOrDelete()}"
+                android:onClick="@{() -> myViewModel.clearAllOrDeleteClicked()}"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
