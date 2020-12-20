@@ -7,8 +7,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mkemp.roomdemo.databinding.ListItemBinding
 import com.mkemp.roomdemo.db.Subscriber
 
-class MyRecyclerViewAdapter(private val subscribers: List<Subscriber>,
-                            private val clickListener : (Subscriber) -> Unit) : RecyclerView.Adapter<MyViewHolder>() {
+class MyRecyclerViewAdapter(private val clickListener : (Subscriber) -> Unit) : RecyclerView.Adapter<MyViewHolder>() {
+
+    private val subscribersList = ArrayList<Subscriber>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val layoutInflater  = LayoutInflater.from(parent.context)
@@ -18,13 +19,17 @@ class MyRecyclerViewAdapter(private val subscribers: List<Subscriber>,
     }
 
     override fun getItemCount(): Int {
-        return subscribers.size
+        return subscribersList.size
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        holder.bind(subscribers[position], clickListener)
+        holder.bind(subscribersList[position], clickListener)
     }
 
+    fun setList(subscribers: List<Subscriber>) {
+        subscribersList.clear()
+        subscribersList.addAll(subscribers)
+    }
 }
 
 class MyViewHolder(val binding: ListItemBinding) : RecyclerView.ViewHolder(binding.root) {
