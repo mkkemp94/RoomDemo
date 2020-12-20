@@ -2,6 +2,7 @@ package com.mkemp.roomdemo
 
 import androidx.databinding.Bindable
 import androidx.databinding.Observable
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -18,15 +19,16 @@ class SubscriberViewModel(private val repository: SubscriberRepository) : ViewMo
 
     @Bindable
     val inputName = MutableLiveData<String>()
-
     @Bindable
     val inputEmail = MutableLiveData<String>()
-
     @Bindable
     val saveOrUpdateButtonText = MutableLiveData<String>()
-
     @Bindable
     val clearAllOrDeleteButtonText = MutableLiveData<String>()
+
+    private val statusMessage = MutableLiveData<Event<String>>()
+    val message : LiveData<Event<String>>
+        get() = statusMessage
 
     init {
         saveOrUpdateButtonText.value = "Save"
@@ -62,12 +64,14 @@ class SubscriberViewModel(private val repository: SubscriberRepository) : ViewMo
     fun insert(subscriber: Subscriber) {
         viewModelScope.launch {
             repository.insert(subscriber)
+            statusMessage.value = Event("Subscriber inserted successfully")
         }
     }
 
     fun update(subscriber: Subscriber) {
         viewModelScope.launch {
             repository.update(subscriber)
+            statusMessage.value = Event("Subscriber updated successfully")
         }
 
         inputName.value = null
@@ -80,6 +84,7 @@ class SubscriberViewModel(private val repository: SubscriberRepository) : ViewMo
     fun delete(subscriber: Subscriber) {
         viewModelScope.launch {
             repository.delete(subscriber)
+            statusMessage.value = Event("Subscriber deleted successfully")
         }
 
         inputName.value = null
@@ -92,6 +97,7 @@ class SubscriberViewModel(private val repository: SubscriberRepository) : ViewMo
     fun clearAll() {
         viewModelScope.launch {
             repository.deleteAll()
+            statusMessage.value = Event("All subscribers deleted successfully")
         }
     }
 
